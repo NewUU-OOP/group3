@@ -18,4 +18,8 @@ public class BookItem extends Book {
         return true;
     }
 
+    @Override
+    public void borrow() {
+
+    }
 }

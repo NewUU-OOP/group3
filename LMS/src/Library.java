@@ -23,4 +23,11 @@ public class Library {
         return address;
     }
 
+    @Override
+    public String toString() {
+        return "Library{" +
+                "name='" + name + '\'' +
+                ", address=" + address.toString() +
+                '}';
+    }
 }
