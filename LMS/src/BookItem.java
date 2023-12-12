@@ -1,4 +1,5 @@
 import java.util.Date;
+import java.util.List;
 
 public class BookItem extends Book {
 
@@ -13,13 +14,13 @@ public class BookItem extends Book {
     private Date publicationDate;
     private Rack placedAt;
 
+    public BookItem(String ISBN, String title, String subject, String publisher, String language, int numberOfPages, List<Author> authors) {
+        super(ISBN, title, subject, publisher, language, numberOfPages, authors);
+    }
+
     public boolean checkout(String memberId) {
 
         return true;
     }
 
-    @Override
-    public void borrow() {
-
-    }
 }
