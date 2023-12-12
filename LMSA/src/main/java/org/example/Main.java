@@ -13,8 +13,7 @@ import javafx.stage.Stage;
 public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         VBox dataView = new VBox();
-        //TableView tableView = new TableView();
-        //dataView.getChildren().add(tableView);
+
         BorderPane borderPane = new BorderPane();
         borderPane.setPadding(new Insets(10,10,10,10));
         GridPane gridPane= new GridPane();
