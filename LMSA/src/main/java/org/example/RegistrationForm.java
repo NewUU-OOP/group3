@@ -14,7 +14,7 @@ public class RegistrationForm {
     private static void createAndShowGUI() {
         JFrame frame = new JFrame("Registration Form");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(400, 400);
+        frame.setSize(800, 800);
 
         Container container = frame.getContentPane();
         container.setLayout(new GridBagLayout());

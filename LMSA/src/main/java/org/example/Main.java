@@ -5,16 +5,35 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+
 public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         VBox dataView = new VBox();
-        //TableView tableView = new TableView();
-        //dataView.getChildren().add(tableView);
+        TableView<Book> tableView = new TableView<>();
+
+        TableColumn<Book, String> isbnColumn = new TableColumn<>("ISBN");
+        isbnColumn.setCellValueFactory(new PropertyValueFactory<>("ISBN"));
+        TableColumn<Book, String> titleColumn = new TableColumn<>("Title");
+        titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
+        tableView.getColumns().addAll(isbnColumn, titleColumn);
+        dataView.getChildren().add(tableView);
+
+
+        // Create the table and set the columns
+        tableView = new TableView<>();
+
+
+
+
+
+
+
         BorderPane borderPane = new BorderPane();
         borderPane.setPadding(new Insets(10,10,10,10));
         GridPane gridPane= new GridPane();
