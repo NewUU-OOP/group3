@@ -1,62 +1,70 @@
 package org.example;
 
+import java.util.List;
+
 public class Book {
     private String ISBN;
     private String title;
     private String subject;
     private String publisher;
     private String language;
-    private String author;
-    private Rack placedAt;
-    private BookFormat format;
-    private BookStatus status;
+    private Integer pages;
+    private List<AuthorPage> authorPages;
 
-    public Book(String ISBN, String title, String subject, String publisher,
-                String language, String author, Rack placedAt, BookFormat format, BookStatus status) {
+    public Book(String ISBN, String title, String subject, String publisher, String language, Integer pages) {
         this.ISBN = ISBN;
         this.title = title;
         this.subject = subject;
         this.publisher = publisher;
         this.language = language;
-        this.author = author;
-        this.placedAt = placedAt;
-        this.format = format;
-        this.status = status;
+        this.pages = pages;
     }
 
     public String getISBN() {
         return ISBN;
     }
 
+    public void setISBN(String ISBN) {
+        this.ISBN = ISBN;
+    }
+
     public String getTitle() {
         return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getSubject() {
         return subject;
     }
 
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
     public String getPublisher() {
         return publisher;
+    }
+
+    public void setPublisher(String publisher) {
+        this.publisher = publisher;
     }
 
     public String getLanguage() {
         return language;
     }
 
-    public String getAuthor() {
-        return author;
+    public void setLanguage(String language) {
+        this.language = language;
     }
 
-    public Rack getPlacedAt() {
-        return placedAt;
+    public Integer getPages() {
+        return pages;
     }
 
-    public BookFormat getFormat() {
-        return format;
-    }
-
-    public BookStatus getStatus() {
-        return status;
+    public void setPages(Integer pages) {
+        this.pages = pages;
     }
 }

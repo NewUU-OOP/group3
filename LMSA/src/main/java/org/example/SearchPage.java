@@ -6,6 +6,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
+import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -14,7 +15,12 @@ import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
-public class SearchPage extends Application {
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Date;
+import java.util.List;
+
+public class SearchPage extends Application implements Search{
 
     public static void main(String[] args) {
         launch(args);
@@ -25,8 +31,14 @@ public class SearchPage extends Application {
         BorderPane mainContainer = new BorderPane();
         MenuBar menuBar = new MenuBar();
         Menu createAccount = new Menu("Create Account");
-        Menu addBooks  = new Menu("Add/Update");
-        menuBar.getMenus().addAll(createAccount,addBooks);
+        Menu books  = new Menu("Books");
+        MenuItem addBooks = new MenuItem("Add/Update books");
+        MenuItem deleteBooks = new MenuItem("Delete Books");
+        books.getItems().add(0,addBooks);
+        books.getItems().add(1,deleteBooks);
+
+        Menu loginSystem = new Menu("Login");
+        menuBar.getMenus().addAll(loginSystem,createAccount,books);
         mainContainer.setTop(menuBar);
         primaryStage.setTitle("Search Page");
         VBox vbox = new VBox();
@@ -39,6 +51,13 @@ public class SearchPage extends Application {
         searchLabel.setStyle("-fx-font-size: 28px; -fx-font-weight: bold;-fx-font-family: 'Times New Roman'");
         Label loginInfo = new Label("");
 
+        loginSystem.setOnAction(actionEvent -> {
+            System.out.println("Login view ");
+        });
+        addBooks.setOnAction(actionEvent -> {
+           BookForm bookForm = new BookForm();
+           bookForm.showBookInfo("");
+        });
 
         // Search Text Input
         TextField searchTextField = new TextField();
@@ -58,41 +77,25 @@ public class SearchPage extends Application {
         TableColumn<Book, String> subjectCol = createColumn("Subject", "subject");
         TableColumn<Book, String> publisherCol = createColumn("Publisher", "publisher");
         TableColumn<Book, String> languageCol = createColumn("Language", "language");
-        TableColumn<Book, String> authorCol = createColumn("Author", "author");
-        TableColumn<Book, Rack> placedAtCol = createColumn("Placed At", "placedAt");
-        TableColumn<Book, BookFormat> formatCol = createColumn("Format", "format");
-        TableColumn<Book, BookStatus> statusCol = createColumn("Status", "status");
-        tableView.setItems(getSampleBookData());
+        TableColumn<Book, Integer> pagesCol = createColumn("Pages", "pages");
+
+        tableView.setItems(getSampleBookData(searchTextField.getText()));
 
         tableView.getColumns().addAll(ISBNCol, titleCol, subjectCol, publisherCol,
-                        languageCol, authorCol, placedAtCol, formatCol, statusCol);
+                        languageCol, pagesCol);
         // Create context menu items
         MenuItem reserveItem = new MenuItem("Reserve");
         MenuItem viewItem = new MenuItem("View");
 
+        searchTextField.setOnAction(actionEvent -> {
+            tableView.setItems(getSampleBookData(searchTextField.getText()));
+        });
+
         // Event handler for the search button (replace with your search logic)
         searchButton.setOnAction(event -> {
-            if (!searchTextField.getText().isEmpty()) {
-                String searchText = searchTextField.getText();
-                System.out.println("Searching for: " + searchText);
-                // Add your search logic here
-                int size = tableView.getItems().size();
-                ObservableList<Book> newData = FXCollections.observableArrayList();
-                while (size > 0) {
-                    if (tableView.getItems().get(size-1).getAuthor().contains(searchText)) {
-                        System.out.println("Found");
-                        newData.add(tableView.getItems().get(size - 1));
-                    }
-                    size--;
+            tableView.setItems(getSampleBookData(searchTextField.getText()));
                 }
-                tableView.setItems(newData);
-            }else {
-                tableView.setItems(getSampleBookData());
-            }
-
-
-
-        });
+        );
 
         // Set actions for context menu items
         reserveItem.setOnAction(event -> reserveSelectedBook(tableView.getSelectionModel().getSelectedItem(),primaryStage));
@@ -106,19 +109,17 @@ public class SearchPage extends Application {
         tableView.setContextMenu(contextMenu);
        // Add components to the VBox
         vbox.getChildren().addAll(searchLabel, searchTextField, searchButton);
-        HBox hBox = new HBox();
-        hBox.getChildren().addAll(vbox,tableView);
+        VBox containerSearchAndTableView = new VBox();
+        containerSearchAndTableView.getChildren().addAll(vbox,tableView);
+
         //mainContainer.setTop(vbox);
-        mainContainer.setCenter(hBox);
+        mainContainer.setCenter(containerSearchAndTableView);
 
         // Set up the scene
         Scene scene = new Scene(mainContainer);
         primaryStage.setScene(scene);
         primaryStage.setMinWidth(1050);
         primaryStage.setMinHeight(700);
-        primaryStage.setFullScreen(true);
-
-
         primaryStage.show();
     }
     private <S, T> TableColumn<Book, T> createColumn(String columnName, String propertyName) {
@@ -154,21 +155,55 @@ public class SearchPage extends Application {
 
     private void viewSelectedBook(Book selectedBook) {
         if (selectedBook != null) {
-            // Implement your view logic here
-            System.out.println("Viewing Book: " + selectedBook.getTitle());
+            BookForm bookForm = new BookForm();
+            bookForm.showBookInfo(selectedBook.getISBN());
+            System.out.println("Viewing Book: " + selectedBook.getISBN());
         }
     }
-    private ObservableList<Book> getSampleBookData() {
-        ObservableList<Book> data = FXCollections.observableArrayList();
-        data.add(new Book("1234567890", "The Great Gatsby", "Fiction", "Scribner", "English", "F. Scott Fitzgerald", new Rack(1,"A"), BookFormat.HARDCOVER, BookStatus.AVAILABLE));
-        data.add(new Book("2345678901", "To Kill a Mockingbird", "Mystery", "J.B. Lippincott & Co.", "English", "Harper Lee", new Rack(2,"A"), BookFormat.PAPERBACK, BookStatus.RESERVED));
-        data.add(new Book("3456789012", "A Brief History of Time", "Science", "Bantam Books", "English", "Stephen Hawking", new Rack(3,"B"), BookFormat.EBOOK, BookStatus.AVAILABLE));
-        data.add(new Book("4567890123", "Pride and Prejudice", "Romance", "T. Egerton, Whitehall", "English", "Jane Austen", new Rack(3,"B"), BookFormat.HARDCOVER, BookStatus.AVAILABLE));
-        data.add(new Book("5678901234", "The Da Vinci Code", "History", "Doubleday", "English", "Dan Brown", new Rack(3,"B"), BookFormat.PAPERBACK, BookStatus.AVAILABLE));
-        data.add(new Book("6789012345", "Harry Potter and the Philosopher's Stone", "Fantasy", "Bloomsbury", "English", "J.K. Rowling", new Rack(3,"B"), BookFormat.EBOOK, BookStatus.RESERVED));
-        data.add(new Book("7890123456", "The Girl with the Dragon Tattoo", "Thriller", "Norstedts Förlag", "Swedish", "Stieg Larsson", new Rack(3,"B"), BookFormat.HARDCOVER, BookStatus.LOANED));
+    private ObservableList<Book> getSampleBookData(String text) {
 
-        return data;
+        System.out.println("Hello from Search");
+        ObservableList<Book> newData =FXCollections.observableArrayList();
+
+        try {
+            ResultSet resultSet = DatabaseConnection.getData("SELECT * FROM bookinfo WHERE title LIKE '%"+text+"%' " +
+                    "|| subject LIKE '%"+text+"%' || isbn LIKE '%"+text+"%'");
+            if (resultSet != null) {
+                while (resultSet.next()) {
+                    newData.add(new Book(
+                            resultSet.getString(1),
+                            resultSet.getString(2),
+                            resultSet.getString(3),
+                            resultSet.getString(4),
+                            resultSet.getString(5),
+                            resultSet.getInt(6)));
+                }
+            }
+        } catch(SQLException e){
+            throw new RuntimeException(e);
+        }
+
+       return newData;
+    }
+
+    @Override
+    public List<Book> searchByTitle(String title) {
+        return null;
+    }
+
+    @Override
+    public List<Book> searchByAuthor(String author) {
+        return null;
+    }
+
+    @Override
+    public List<Book> searchBySubject(String subject) {
+        return null;
+    }
+
+    @Override
+    public List<Book> searchByPubDate(Date publishDate) {
+        return null;
     }
 
 }
