@@ -156,8 +156,18 @@ public class BookForm {
             }
             System.out.println("Get Book Info");
         });
+        Button randomData = new Button("Random Data Insert");
+        randomData.setOnAction(actionEvent -> {
+            try {
+                RandomData.insertDB();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
         grid.add(saveButton, 0, 6);
         grid.add(cancelButton, 1, 6);
+        grid.add(randomData,1, 7);
+
 
         Scene scene = new Scene(grid, 400, 300);
         primaryStage.setScene(scene);

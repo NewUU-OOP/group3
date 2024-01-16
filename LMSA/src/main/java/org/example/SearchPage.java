@@ -30,10 +30,15 @@ public class SearchPage extends Application implements Search{
     public void start(Stage primaryStage) {
         BorderPane mainContainer = new BorderPane();
         MenuBar menuBar = new MenuBar();
-        Menu createAccount = new Menu("Create Account");
+        Menu createAccount = new Menu("Account");
         Menu books  = new Menu("Books");
         MenuItem addBooks = new MenuItem("Add/Update books");
         MenuItem deleteBooks = new MenuItem("Delete Books");
+        MenuItem addAccount = new MenuItem("Add Account");
+        MenuItem deleteAccount = new MenuItem("Delete Account");
+        MenuItem updateAccount = new MenuItem("Update Account");
+        createAccount.getItems().addAll(addAccount,deleteAccount,updateAccount);
+
         books.getItems().add(0,addBooks);
         books.getItems().add(1,deleteBooks);
 
@@ -49,6 +54,7 @@ public class SearchPage extends Application implements Search{
         Label searchLabel = new Label("Search:");
         searchLabel.setAlignment(Pos.CENTER);
         searchLabel.setStyle("-fx-font-size: 28px; -fx-font-weight: bold;-fx-font-family: 'Times New Roman'");
+
         Label loginInfo = new Label("");
 
         loginSystem.setOnAction(actionEvent -> {
@@ -59,6 +65,12 @@ public class SearchPage extends Application implements Search{
            bookForm.showBookInfo("");
         });
 
+        addAccount.setOnAction(actionEvent -> {
+            PersonDetailsForm personDetailsForm = new PersonDetailsForm();
+            personDetailsForm.start(new Stage());
+
+        });
+
         // Search Text Input
         TextField searchTextField = new TextField();
         searchTextField.setPromptText("Search by: Title, Author, ISBN, Genre");
@@ -66,6 +78,7 @@ public class SearchPage extends Application implements Search{
         // Search Button
         Button searchButton = new Button("Search");
         searchButton.setStyle("-fx-font-size: 14px;");
+
 
 
         TableView<Book> tableView = new TableView<>();
